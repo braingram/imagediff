@@ -32,6 +32,8 @@ except ImportError:
 
 import setuptools
 
+def find_scripts():
+    return [s for s in setuptools.findall('scripts/') if os.path.splitext(s)[1] != '.pyc']
 
 def package_to_path(package):
     """
@@ -92,6 +94,8 @@ packages = setuptools.find_packages()
 
 package_data = find_package_data(packages)
 
+scripts = find_scripts()
+
 package_name = packages[0]
 
 if debug:
@@ -99,11 +103,15 @@ if debug:
     for package in packages:
         logging.debug("Package: %s" % package)
         logging.debug("\tData: %s" % str(package_data[package]))
+    logging.debug("Scripts:")
+    for script in scripts:
+        logging.debug("\tScript: %s" % script)
 
 setuptools.setup(
     name = package_name,
     version = 'dev',
     packages = packages,
+    scripts = scripts,
     
     package_data = package_data,
     include_package_data = True

@@ -35,6 +35,6 @@ def rgba_apply_background(image, bg):
 
 def la_apply_background(image, bg):
     bwt = 1 - image[:,:,1]/255.
-    bwt = numpy.dstack((bwt, bwt, bwt))
+    #bwt = numpy.dstack((bwt, bwt, bwt))
     iwt = 1 - bwt
     return (image[:,:,0] * iwt + bg * bwt).astype(image.dtype)

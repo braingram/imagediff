@@ -28,14 +28,20 @@ def resize(image, size, fill):
         raise ValueError("Image shape(%s) was larger than size(%s)" % \
                 (str(image.shape), str(size)))
     top, bottom, left, right = calculate_border(image, size)
-    filler = (numpy.ones_like(image) * fill).astype(image.dtype)
+    if image.ndim == 3:
+        filler = (numpy.ones((size[0], size[1], image.shape[2]) * \
+                fill)).astype(image.dtype)
+    else:
+        filler = (numpy.ones(size) * fill).astype(image.dtype)
 
     # add top & bottom border
-    image = numpy.vstack((filler[:top,:], image, filler[:bottom,:]))
+    image = numpy.vstack((filler[:top,:image.shape[1]], \
+            image, filler[:bottom,:image.shape[1]]))
 
     filler = (numpy.ones_like(image) * fill).astype(image.dtype)
 
     # add left & right border
-    image = numpy.hstack((filler[:,:left], image, filler[:,:right]))
+    image = numpy.hstack((filler[:image.shape[0],:left], \
+            image, filler[:image.shape[0],:right]))
 
     return image
