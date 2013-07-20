@@ -11,20 +11,22 @@ filenames = sys.argv[1:]
 if len(filenames) < 1:
     raise ValueError("Must supply >1 file")
 fill = 127
-comp = imagediff.distance.distance # f(im1, im2)
+comp = imagediff.distance.distance  # f(im1, im2)
 
 images = []
 # load
-for fn in filenames:
+for (i, fn) in enumerate(filenames):
+    print "  %i : %s" % (i, fn)
     im = imagediff.loader.load(fn)
     # remove alpha?
     if im.ndim == 3:
-        if im.shape[2] == 4: # RGBA
-            im = imagediff.ops.background.apply_background(im, (fill,fill,fill))
+        if im.shape[2] == 4:   # RGBA
+            im = imagediff.ops.background.apply_background(\
+                    im, (fill, fill, fill))
             im = imagediff.ops.color.to_gray(im)
         elif im.shape[2] == 3:
             im = imagediff.ops.color.to_gray(im)
-        elif im.shape[2] == 2: # LA
+        elif im.shape[2] == 2:  # LA
             im = imagediff.ops.background.apply_background(im, fill)
     images.append(im)
 
@@ -33,10 +35,12 @@ dists = numpy.zeros((n_images, n_images))
 # compare
 for i1 in xrange(n_images):
     for i2 in xrange(n_images):
-        if i2 <= i1: continue
-        im1, im2 = imagediff.ops.resize.match_sizes(images[i1], images[i2], 127)
-        dists[i1,i2] = comp(im1, im2)
-        dists[i2,i1] = dists[i1,i2]
+        if i2 <= i1:
+            continue
+        im1, im2 = imagediff.ops.resize.match_sizes(\
+                images[i1], images[i2], 127)
+        dists[i1, i2] = comp(im1, im2)
+        dists[i2, i1] = dists[i1, i2]
 
 
 print "------ ",
